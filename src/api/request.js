@@ -3,6 +3,7 @@ import {httpGet} from "@/api/interceptor.js";
 // 本地开发 npm run server
 const oaBase = {
   getPerFectLingo: "https://recite.perfectlingo.com/api/dictionary/dic/v1",
+  getMeaning: "https://recite.perfectlingo.com/dic/v2"
 };
 
 // 提交到 Git , 自动部署, npm run build
@@ -10,11 +11,10 @@ const woaBase = {
   getPerFectLingo: "https://recite.perfectlingo.com/api/dictionary/dic/v1",
 };
 
-
-
 let devAPI = {
   getMnemoics: "/get-mnemonics",
   getWordResource: "/get-word-resources",
+  getMeaning: "/get-collins-resources"
 };
 
 let prodAPI = {};
@@ -30,6 +30,19 @@ const tplAPI = {
       params: params
     })
   },
+  getMeans(params) {
+    return httpGet({
+      url: `${base.getMeaning}${api.getMeaning}`,
+      params: params
+    })
+  },
+
+  getPharse(params) {
+    return httpGet({
+      url: `${base.getPerFectLingo}${api.getWordResource}`,
+      params: params
+    })
+  }
 };
 
 export default tplAPI;

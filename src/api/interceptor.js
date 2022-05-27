@@ -23,7 +23,7 @@ service.interceptors.response.use(
     if (res.code === 0 || res.retCode === 0) {
       return res;
     } else {
-      Message.error(res.message);
+      Message.error(res);
       return null;
     }
   },
@@ -48,7 +48,7 @@ export function httpGet({ url, params = {} }) {
         params,
       })
       .then(res => {
-        resolve(res.data);
+        resolve(res?.data || null);
       })
       .catch(err => {
         reject(err);
