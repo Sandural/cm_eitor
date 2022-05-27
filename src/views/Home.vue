@@ -11,6 +11,8 @@
       <div>{{ m.phrase }} {{ m.meanCn }}</div>
     </div>
     <el-button @click="simpleCopy(picUrl)">复制图片地址</el-button>
+    <el-button @click="simpleCopy(wordVideoUrl)">复制wordVideoUrl</el-button>
+    <el-button @click="simpleCopy(exampleVideoUrl)">复制exampleVideoUrl</el-button>
   </div>
 </template>
 
@@ -24,6 +26,8 @@ export default {
       sentence: "",
       pharse: [],
       wordMean: "",
+      exampleVideoUrl: "",
+      wordVideoUrl: ""
     };
   },
 
@@ -45,7 +49,7 @@ export default {
       let data = res.mnemonics.picMnemonics[0]?.content
       if (res) {
         this.picUrl = data
-          ? `https://wanciwangdata-oss.perfectlingo.com/resources/word-picture/${data}.png`
+          ? `https://wanciwangdata-oss.perfectlingo.com/resources/word-picture/${data}.jpg`
           : "";
       }
     },
@@ -68,13 +72,10 @@ export default {
       console.log('resource', res);
       if (res) {
         this.pharse = res?.wordPhrases;
-
-        const { exampleEn, exampleCn } = res.meanExamples[0]?.examples[0];
-        console.log(
-          "res.meanExamples[0]?.examples",
-          res.meanExamples[0]?.examples
-        );
-        this.sentence = exampleEn ? `${exampleEn}<br/>${exampleCn}` : "";
+        const {exampleVideoUrl, wordVideoUrl, exampleCn, exampleEnLabeled} = res?.wordExampleVideoResource || {}
+        this.sentence = exampleEnLabeled ? `${exampleEnLabeled}<br/>${exampleCn}` : "";
+        this.exampleVideoUrl = exampleVideoUrl;
+        this.wordVideoUrl = wordVideoUrl;
       }
     },
 
