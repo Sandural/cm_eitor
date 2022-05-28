@@ -5,9 +5,8 @@ const oaBase = {
   getPerFectLingo: "https://recite.perfectlingo.com/api/dictionary/dic/v1",
   getMeaning: "https://recite.perfectlingo.com/dic/v2",
   getNebula: "https://recite.perfectlingo.com/api/dictionary/nebula/v1",
-  getTree: "https://recite.perfectlingo.com/api/recite/derivative/v1"
-  // https://recite.perfectlingo.com/api/recite/derivative/v1/get-tree?tagId=4&word=stake
-  // https://recite.perfectlingo.com/api/dictionary/dic/v1/get-wisdom-affix?tagId=4&word=stake
+  getTree: "https://recite.perfectlingo.com/api/recite/derivative/v1",
+  wisdomTree: "https://recite.perfectlingo.com/api/dictionary/dic/v1"
 };
 
 
@@ -22,7 +21,8 @@ let devAPI = {
   getWordResource: "/get-word-resources",
   getMeaning: "/get-collins-resources",
   nebulaData: "/get-similar-form", 
-  tree: "/get-tree"
+  tree: "/get-tree",
+  wisdomAffix: "/get-wisdom-affix"
 };
 
 let prodAPI = {};
@@ -54,13 +54,20 @@ const tplAPI = {
 
   getNebula(params) {
     return httpGet({
-      url: `${base.getNebula}${api.nebulaData}`,
+      url: `${base.getPerFectLingo}${api.nebulaData}`,
       params: params
     })
   },
   getTrees(params) {
     return httpGet({
       url: `${base.getTree}${api.tree}`,
+      params: params
+    })
+  },
+
+  getWisDomAffix(params) {
+    return httpGet({
+      url: `${base.wisdomTree}${api.wisdomAffix}`,
       params: params
     })
   }
