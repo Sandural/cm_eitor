@@ -19,7 +19,7 @@
     </div>
     <div class="title">派生词---</div>
     <div v-for="n in treeList" :key="n.wordId">
-      <div v-html="`${n.word}[${n.character}] ${n.meanCn}`"></div>
+      <div v-html="`- ${n.word}[${n.character}] ${n.meanCn}`"></div>
     </div>
     <div class="title">智慧词根---</div>
     <div
