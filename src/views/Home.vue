@@ -3,12 +3,23 @@
     <el-input v-model="word" style="width: 200px"></el-input>
     <el-button @click="getInfo">获取单词信息</el-button>
     <img style="display: block" :src="picUrl" />
+    <div class="title">含义---</div>
     <div v-for="(m, index) in meaning" :key="index + m">
       <div>{{ m }}</div>
     </div>
+    <div class="title">例句---</div>
     <div v-html="sentence"></div>
+    <div class="title">短语---</div>
     <div v-for="(m, i) in pharse" :key="i + m.phrase">
       <div>{{ m.phrase }} {{ m.meanCn }}</div>
+    </div>
+    <div class="title">星云---</div>
+    <div v-for="(n , i) in nebulaList" :key="i + n">
+      <div>{{n}}</div>
+    </div>
+    <div class="title">派生词---</div>
+    <div v-for="n in treeList" :key="n.wordId">
+      <div v-html="`${n.word}[${n.character}] ${n.meanCn}`"></div>
     </div>
     <el-button @click="simpleCopy(picUrl)">复制图片地址</el-button>
     <el-button @click="simpleCopy(wordVideoUrl)">复制wordVideoUrl</el-button>
@@ -27,7 +38,9 @@ export default {
       pharse: [],
       wordMean: "",
       exampleVideoUrl: "",
-      wordVideoUrl: ""
+      wordVideoUrl: "",
+      nebulaList: [],
+      treeList: []
     };
   },
 
@@ -37,6 +50,8 @@ export default {
         this.getMnemonics(),
         this.getMeaning(),
         this.getResourcce(),
+        this.getNebulas(),
+        this.getTree()
       ]);
     },
     async getMnemonics() {
@@ -55,7 +70,6 @@ export default {
     },
 
     async getMeaning() {
-      // https://recite.perfectlingo.com/dic/v2/get-collins-resources?word=consciousness
       let res = await this.$tplAPI.getMeans({ word: this.word });
       this.meaning = [];
       if (res) {
@@ -67,9 +81,7 @@ export default {
     },
 
     async getResourcce() {
-      // meanExamples, wordPhrases
       let res = await this.$tplAPI.getPharse({ tagId: 4, word: this.word });
-      console.log('resource', res);
       if (res) {
         this.pharse = res?.wordPhrases;
         const {exampleVideoUrl, wordVideoUrl, exampleCn, exampleEnLabeled} = res?.wordExampleVideoResource || {}
@@ -77,6 +89,25 @@ export default {
         this.exampleVideoUrl = exampleVideoUrl;
         this.wordVideoUrl = wordVideoUrl;
       }
+    },
+
+    async getNebulas() {
+       // ?word=crop
+      let res = await this.$tplAPI.getNebula({word: this.word})
+      this.nebulaList = []
+      if(res) {
+        (res.wordInfos || []).forEach((v, index) => {
+          if(index < 5) {
+              this.nebulaList.push(`${v.word}【${v.character || ''}${v.meaningCn}】`)
+          }
+        })
+      }
+    },
+
+    async getTree() {
+      let res = await this.$tplAPI.getTrees({tagId: 4, word: this.word})
+      const { word, meanCn, rootList, child } = res.derivativeTree[0]
+      this.treeList = child
     },
 
     simpleCopy(content) {
@@ -102,3 +133,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.title {
+  font-size: 20px;
+  color: red;
+}
+</style>

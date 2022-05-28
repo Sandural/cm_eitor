@@ -3,8 +3,14 @@ import {httpGet} from "@/api/interceptor.js";
 // 本地开发 npm run server
 const oaBase = {
   getPerFectLingo: "https://recite.perfectlingo.com/api/dictionary/dic/v1",
-  getMeaning: "https://recite.perfectlingo.com/dic/v2"
+  getMeaning: "https://recite.perfectlingo.com/dic/v2",
+  getNebula: "https://recite.perfectlingo.com/api/dictionary/nebula/v1",
+  getTree: "https://recite.perfectlingo.com/api/recite/derivative/v1"
+  // https://recite.perfectlingo.com/api/recite/derivative/v1/get-tree?tagId=4&word=stake
+  // https://recite.perfectlingo.com/api/dictionary/dic/v1/get-wisdom-affix?tagId=4&word=stake
 };
+
+
 
 // 提交到 Git , 自动部署, npm run build
 const woaBase = {
@@ -14,7 +20,9 @@ const woaBase = {
 let devAPI = {
   getMnemoics: "/get-mnemonics",
   getWordResource: "/get-word-resources",
-  getMeaning: "/get-collins-resources"
+  getMeaning: "/get-collins-resources",
+  nebulaData: "/get-similar-form", 
+  tree: "/get-tree"
 };
 
 let prodAPI = {};
@@ -40,6 +48,19 @@ const tplAPI = {
   getPharse(params) {
     return httpGet({
       url: `${base.getPerFectLingo}${api.getWordResource}`,
+      params: params
+    })
+  },
+
+  getNebula(params) {
+    return httpGet({
+      url: `${base.getNebula}${api.nebulaData}`,
+      params: params
+    })
+  },
+  getTrees(params) {
+    return httpGet({
+      url: `${base.getTree}${api.tree}`,
       params: params
     })
   }
