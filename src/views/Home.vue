@@ -47,24 +47,24 @@
           v-for="(item, index) in wordMeanAffixInfoList"
           :key="index + item.meanCnGroup"
         >
-          <div style="font-weight: 700; font-size: 20; color: #c80021;">
+          <p style="font-weight: 700; font-size: 20; color: #c80021;">
             🍒 {{ item.meanCnGroup }}
-          </div>
+          </p>
           <div v-if="item.wordAffixInfoList.length">
             <div
               v-for="(affix, aIdx) in item.wordAffixInfoList"
               :key="affix + affix.word"
             >
-              <div
+              <li
                 style="
-                  font-weight: 700;
+                  font-weight: 300;
                   font-size: 18;
-                  color: #ffa900;
                   margin-top: 10px;
+                  margin-right: 0;
                 "
+                v-html="affix.labelWord.replace(/<b>/g, `<b style='color: #ffa900'>`)"
               >
-                {{ affix.word }}
-              </div>
+              </li>
               <div style="margin-top: 5px" v-if="affix.wordRootAffixList">
                 <span
                   style="
