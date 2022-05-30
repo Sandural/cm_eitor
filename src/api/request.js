@@ -54,7 +54,7 @@ const tplAPI = {
 
   getNebula(params) {
     return httpGet({
-      url: `${base.getPerFectLingo}${api.nebulaData}`,
+      url: `${base.getNebula}${api.nebulaData}`,
       params: params
     })
   },

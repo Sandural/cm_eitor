@@ -2,111 +2,122 @@
   <div>
     <el-input v-model="word" style="width: 200px"></el-input>
     <el-button @click="getInfo">获取单词信息</el-button>
-    <img style="display: block" :src="picUrl" />
-    <div class="title">含义---</div>
-    <div v-for="(m, index) in meaning" :key="index + m">
-      <div>{{ m }}</div>
-    </div>
-    <div class="title">例句---</div>
-    <div v-html="sentence"></div>
-    <div class="title">短语---</div>
-    <div v-for="(m, i) in pharse" :key="i + m.phrase">
-      <div>{{ m.phrase }} {{ m.meanCn }}</div>
-    </div>
-    <div class="title">星云---</div>
-    <div v-for="(n, i) in nebulaList" :key="i + n">
-      <div>{{ n }}</div>
-    </div>
-    <div class="title">派生词---</div>
-    <div v-for="n in treeList" :key="n.wordId">
-      <div v-html="`- ${n.word}[${n.character}] ${n.meanCn}`"></div>
-    </div>
-    <div class="title">智慧词根---</div>
-    <div
-      style="
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        row-gap: 10px;
-        margin-top: 10px;
-        letter-spacing: 0.07em;
-      "
-      id="wisdom"
-    >
+    <el-button @click="copyInfo">复制单词信息</el-button>
+    <div id="mainContent">
+      <div style="display: flex; align-items: center; column-gap: 10px">
+        <div style="color: #00b400; font-weight: 700; font-size:20px">{{word}}</div>
+        <audio style="width: 200px" controls :src="audioUrl">Your browser does not support the<code>audio</code> element.</audio>
+      </div>
+      <div v-html="sentence" style="font-style: italic"></div>
+      <div style="width: 100vw; display: flex; align-items: center; column-gap: 10px">
+        <img v-show="picUrl" :src="picUrl" style="max-width: 30%;" />
+        <video v-show="wordVideoUrl" controls :src="wordVideoUrl" style="max-width: 30%;"></video>
+        <video v-show="exampleVideoUrl" controls :src="exampleVideoUrl" style="max-width: 30%;"></video>
+      </div>
+      <div v-for="(m, index) in meaning" :key="index + m">
+        <div>{{ m }}</div>
+      </div>
+      <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="derivationStory">🧠 词根词源</div>
+      <div>{{derivationStory}}</div>
+      <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="pharse.length">🧚‍♀️ 短语</div>
+      <div v-for="(m, i) in pharse" :key="i + m.phrase">
+        <div>- **{{ m.phrase }}** {{ m.meanCn }}</div>
+      </div>
+      <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="nebulaList.length">⛅️ 星云</div>
+      <div v-for="(n, i) in nebulaList" :key="i + n">
+        <div>- {{ n }}</div>
+      </div>
+      <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="treeList.length">💫 派生词</div>
+      <div v-for="n in treeList" :key="n.wordId">
+        <div v-html="`- ${n.word.replace(/<b>|<\/b>/g, '**')} {{【${n.character}】${n.meanCn}}}`"></div>
+      </div>
+      <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="wordMeanAffixInfoList.length">🌈 智慧词根</div>
       <div
-        v-for="(item, index) in wordMeanAffixInfoList"
-        :key="index + item.meanCnGroup"
+        style="
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+          margin-top: 10px;
+          letter-spacing: 0.07em;
+        "
+        id="wisdom"
       >
-        <div style="font-weight: 700; font-size: 20; color: #00b400;">
-          🍒 {{ item.meanCnGroup }}
-        </div>
-        <div v-if="item.wordAffixInfoList.length">
-          <div
-            v-for="(affix, aIdx) in item.wordAffixInfoList"
-            :key="affix + affix.word"
-          >
+        <div
+          v-for="(item, index) in wordMeanAffixInfoList"
+          :key="index + item.meanCnGroup"
+        >
+          <div style="font-weight: 700; font-size: 20; color: #c80021;">
+            🍒 {{ item.meanCnGroup }}
+          </div>
+          <div v-if="item.wordAffixInfoList.length">
             <div
-              style="
-                font-weight: 700;
-                font-size: 18;
-                color: #ffa900;
-                margin-top: 10px;
-              "
+              v-for="(affix, aIdx) in item.wordAffixInfoList"
+              :key="affix + affix.word"
             >
-              {{ affix.word }}
-            </div>
-            <div style="margin-top: 5px" v-if="affix.wordRootAffixList">
-              <span
-                style="
-                  background: #ebfaeb;
-                  color: #00b400;
-                  font-size: 12px;
-                  font-weight: 700;
-                  padding: 2px;
-                  border-radius: 4px;
-                  margin-right: 10px;
-                ">词根</span>
-              <span style="color: #a8a8a8; font-weight: 300">{{ affix.wordRootAffixList[0].affix }} = {{ affix.wordRootAffixList[0].content }}</span>
-            </div>
-            <div style="margin-top: 5px" v-if="affix.wordSuffixAffixList">
-              <span
-                style="
-                  background: #ebfaeb;
-                  color: #00b400;
-                  font-size: 12px;
-                  font-weight: 700;
-                  padding: 2px;
-                  border-radius: 4px;
-                  margin-right: 10px;
-                ">后缀</span>
-              <span style="color: #a8a8a8; font-weight: 300">{{ affix.wordSuffixAffixList[0].affix }} ={{ affix.wordSuffixAffixList[0].content }}</span>
-            </div>
-            <div style="margin-top: 5px" v-if="affix.wordRememberMethodList">
-              <span
-                style="
-                  background: #ebfaeb;
-                  color: #00b400;
-                  font-size: 12px;
-                  font-weight: 700;
-                  padding: 2px;
-                  border-radius: 4px;
-                  margin-right: 10px;
-                ">记忆</span>
-              <span style="color: #a8a8a8; font-weight: 300">{{affix.wordRememberMethodList[0]}}</span>
-            </div>
-            <div
-              style="
-                margin-top: 5px;
-                display: flex;
-                flex-direction: column;
-                row-gap: 4px;
-              " v-if="affix.example">
               <div
-                style="font-style: italic; font-weight: 100"
-                v-html="affix.example.exampleEnLabel"></div>
+                style="
+                  font-weight: 700;
+                  font-size: 18;
+                  color: #ffa900;
+                  margin-top: 10px;
+                "
+              >
+                {{ affix.word }}
+              </div>
+              <div style="margin-top: 5px" v-if="affix.wordRootAffixList">
+                <span
+                  style="
+                    background: #ebfaeb;
+                    color: #00b400;
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: 2px;
+                    border-radius: 4px;
+                    margin-right: 10px;
+                  ">词根</span>
+                <span style="color: #a8a8a8; font-weight: 300">{{ affix.wordRootAffixList[0].affix }} = {{ affix.wordRootAffixList[0].content }}</span>
+              </div>
+              <div style="margin-top: 5px" v-if="affix.wordSuffixAffixList">
+                <span
+                  style="
+                    background: #ebfaeb;
+                    color: #00b400;
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: 2px;
+                    border-radius: 4px;
+                    margin-right: 10px;
+                  ">后缀</span>
+                <span style="color: #a8a8a8; font-weight: 300">{{ affix.wordSuffixAffixList[0].affix }} ={{ affix.wordSuffixAffixList[0].content }}</span>
+              </div>
+              <div style="margin-top: 5px" v-if="affix.wordRememberMethodList">
+                <span
+                  style="
+                    background: #ebfaeb;
+                    color: #00b400;
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: 2px;
+                    border-radius: 4px;
+                    margin-right: 10px;
+                  ">记忆</span>
+                <span style="color: #00994a; font-weight: 300">{{affix.wordRememberMethodList[0]}}</span>
+              </div>
               <div
-                style="color: #a8a8a8; font-weight: 100; font-style: italic"
-                v-html="affix.example.exampleCn"></div>
+                style="
+                  margin-top: 5px;
+                  display: flex;
+                  flex-direction: column;
+                  row-gap: 4px;
+                " v-if="affix.example">
+                <div
+                  style="font-style: italic; font-weight: 100"
+                  v-html="affix.example.exampleEnLabel"></div>
+                <div
+                  style="color: #a8a8a8; font-weight: 100; font-style: italic"
+                  v-html="affix.example.exampleCn"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -114,11 +125,10 @@
     </div>
     <el-button @click="simpleCopy(picUrl)">复制图片地址</el-button>
     <el-button @click="simpleCopy(wordVideoUrl)">复制wordVideoUrl</el-button>
-    <el-button @click="simpleCopy(exampleVideoUrl)"
-      >复制exampleVideoUrl</el-button
-    >
+    <el-button @click="simpleCopy(exampleVideoUrl)">复制exampleVideoUrl</el-button>
     <el-button @click="copyWisdomContent">复制智慧词根</el-button>
   </div>
+    
 </template>
 
 <script>
@@ -136,7 +146,14 @@ export default {
       nebulaList: [],
       treeList: [],
       wordMeanAffixInfoList: [],
+      derivationStory: ""
     };
+  },
+
+  computed: {
+    audioUrl() {
+      return `https://dict.youdao.com/dictvoice?type=1&audio=${this.word}`
+    }
   },
 
   methods: {
@@ -157,12 +174,17 @@ export default {
         originType: "5",
         word: this.word,
       });
-      let data = res.mnemonics.picMnemonics[0]?.content;
+      const { legitimacyMnemonics, picMnemonics } = res.mnemonics
+      let data = picMnemonics[0]?.content;
+      this.derivationStory = legitimacyMnemonics?.derivationStory[0] || ''
+      
       if (res) {
         this.picUrl = data
           ? `https://wanciwangdata-oss.perfectlingo.com/resources/word-picture/${data}.jpg`
           : "";
       }
+
+
     },
 
     async getMeaning() {
@@ -198,7 +220,7 @@ export default {
         (res.wordInfos || []).forEach((v, index) => {
           if (index < 5) {
             this.nebulaList.push(
-              `${v.word}【${v.character || ""}${v.meaningCn}】`
+              `**${v.word}** {{【${v.character || ""}${v.meaningCn}】}}`
             );
           }
         });
@@ -217,6 +239,12 @@ export default {
         word: this.word,
       });
       this.wordMeanAffixInfoList = res?.wordMeanAffixInfoList || [];
+    },
+
+    copyInfo() {
+      let wisdom = document.getElementById("mainContent").outerHTML;
+      wisdom = wisdom.replace(/<!---->/g, "")
+      this.simpleCopy(wisdom);
     },
 
     copyWisdomContent() {
