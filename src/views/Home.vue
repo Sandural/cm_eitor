@@ -239,7 +239,7 @@ export default {
         tagId: 4,
         word: this.word,
       });
-      this.wordMeanAffixInfoList = res?.wordMeanAffixInfoList || [];
+      this.wordMeanAffixInfoList = res?.wordMeanAffixInfoList.slice(0, 1) || [];
     },
 
     copyInfo() {
