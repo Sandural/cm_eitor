@@ -168,6 +168,7 @@ export default {
       ]);
     },
     async getMnemonics() {
+      this.derivationStory = ''
       let res = await this.$tplAPI.getLingo({
         mnemonicType: "0",
         originId: "1",
@@ -220,7 +221,7 @@ export default {
         (res.wordInfos || []).forEach((v, index) => {
           if (index < 5) {
             this.nebulaList.push(
-              `**${v.word}** {{【${v.character || ""}${v.meaningCn}】}}`
+              `**${v.word}**  {{【${v.character || ""}${v.meaningCn}】}}`
             );
           }
         });
