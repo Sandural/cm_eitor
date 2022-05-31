@@ -2,13 +2,27 @@
   <div>
     <el-input v-model="word" style="width: 200px"></el-input>
     <el-button @click="getInfo">获取单词信息</el-button>
-    <el-button @click="copyInfo">复制单词信息</el-button>
+    <el-button @click="copyInfo">复制例句</el-button>
     <div id="mainContent">
       <div style="display: flex; align-items: center; column-gap: 10px">
         <div style="color: #00b400; font-weight: 700; font-size:20px">{{word}}</div>
         <audio style="width: 200px" controls :src="audioUrl">Your browser does not support the<code>audio</code> element.</audio>
       </div>
-      <div v-html="sentence" style="font-style: italic"></div>
+      <div v-html="sentence" style="font-style: italic;"></div>
+      <div  id="sentences" style="font-style: italic;">
+        <div v-for="sent in sentenceExample" :key="sent.exampleId" style="margin: 10px 0">
+          <span :style="{color: sent.type == 2 ? '#00b400' : '#5a6263'}" 
+                style="background: #ebfaeb;
+                      font-size: 12px;
+                      font-weight: 700;
+                      padding: 2px;
+                      border-radius: 4px;
+                      margin-right: 10px;">{{ sent.type == 2 ? '真题' : '例句' }}</span>
+          <span v-html="sent.exampleEnLabel"></span>
+          <div style="margin-top: 6px; font-weight: 200;">{{sent.exampleCn}}</div>
+        </div>
+      </div>
+      
       <div style="width: 100vw; display: flex; align-items: center; column-gap: 10px">
         <img v-show="picUrl" :src="picUrl" style="max-width: 30%;" />
         <video v-show="wordVideoUrl" controls :src="wordVideoUrl" style="max-width: 30%;"></video>
@@ -113,7 +127,7 @@
                 " v-if="affix.example">
                 <div
                   style="font-style: italic; font-weight: 100"
-                  v-html="affix.example.exampleEnLabel"></div>
+                  v-html="affix.example.exampleEnLabel.replace(/<b>/g, `<b style='color: #00994a'>`)"></div>
                 <div
                   style="color: #a8a8a8; font-weight: 100; font-style: italic"
                   v-html="affix.example.exampleCn"></div>
@@ -146,7 +160,8 @@ export default {
       nebulaList: [],
       treeList: [],
       wordMeanAffixInfoList: [],
-      derivationStory: ""
+      derivationStory: "",
+      sentenceExample: []
     };
   },
 
@@ -200,6 +215,7 @@ export default {
     },
 
     async getResourcce() {
+      this.sentenceExample = []
       let res = await this.$tplAPI.getPharse({ tagId: 4, word: this.word });
       if (res) {
         this.pharse = res?.wordPhrases;
@@ -210,6 +226,13 @@ export default {
           : "";
         this.exampleVideoUrl = exampleVideoUrl;
         this.wordVideoUrl = wordVideoUrl;
+
+        this.sentenceExample = res?.meanExamples[0]?.examples;
+        this.sentenceExample.forEach(v => {
+          v.exampleEnLabel = v.exampleEnLabel.replace(/<b>/g, `<b style="color: #00b400">`)
+        })
+
+        console.log('ss', this.sentenceExample);
       }
     },
 
@@ -243,7 +266,7 @@ export default {
     },
 
     copyInfo() {
-      let wisdom = document.getElementById("mainContent").outerHTML;
+      let wisdom = document.getElementById("sentences").outerHTML;
       wisdom = wisdom.replace(/<!---->/g, "")
       this.simpleCopy(wisdom);
     },
