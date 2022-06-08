@@ -8,7 +8,7 @@
         <div style="color: #00b400; font-weight: 700; font-size:20px">{{word}}</div>
         <audio style="width: 200px" controls :src="audioUrl">Your browser does not support the<code>audio</code> element.</audio>
       </div>
-      <div v-html="sentence" style="font-style: italic;"></div>
+      <div style="font-style: italic;">{{sentence}}</div>
       <div  id="sentences" style="font-style: italic;">
         <div v-for="sent in sentenceExample" :key="sent.exampleId" style="margin: 10px 0">
           <span :style="{color: sent.type == 2 ? '#00b400' : '#5a6263'}" 
@@ -222,7 +222,7 @@ export default {
         const { exampleVideoUrl, wordVideoUrl, exampleCn, exampleEnLabeled } =
           res?.wordExampleVideoResource || {};
         this.sentence = exampleEnLabeled
-          ? `${exampleEnLabeled}<br/>${exampleCn}`
+          ? `${exampleEnLabeled}`
           : "";
         this.exampleVideoUrl = exampleVideoUrl;
         this.wordVideoUrl = wordVideoUrl;
