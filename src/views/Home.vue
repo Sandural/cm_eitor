@@ -24,9 +24,10 @@
       </div>
       
       <div style="width: 100vw; display: flex; align-items: center; column-gap: 10px">
-        <img v-show="picUrl" :src="picUrl" style="max-width: 30%;" />
-        <video v-show="wordVideoUrl" controls :src="wordVideoUrl" style="max-width: 30%;"></video>
-        <video v-show="exampleVideoUrl" controls :src="exampleVideoUrl" style="max-width: 30%;"></video>
+        <video v-show="jgVideo" controls :src="jgVideo" style="max-width: 25%;"></video>
+        <img v-show="picUrl" :src="picUrl" style="max-width: 25%;" />
+        <video v-show="wordVideoUrl" controls :src="wordVideoUrl" style="max-width: 25%;"></video>
+        <video v-show="exampleVideoUrl" controls :src="exampleVideoUrl" style="max-width: 25%;"></video>
       </div>
       <div v-for="(m, index) in meaning" :key="index + m">
         <div>{{ m }}</div>
@@ -36,6 +37,9 @@
       <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="pharse.length">🧚‍♀️ 短语</div>
       <div v-for="(m, i) in pharse" :key="i + m.phrase">
         <div>- **{{ m.phrase }}** {{ m.meanCn }}</div>
+      </div>
+      <div v-for="pitem in wordGroup">
+        <div>- {{pitem}}</div>
       </div>
       <div style="font-size: 20px; color: #929292; font-weight: 700;" v-show="nebulaList.length">⛅️ 星云</div>
       <div v-for="(n, i) in nebulaList" :key="i + n">
@@ -161,7 +165,9 @@ export default {
       treeList: [],
       wordMeanAffixInfoList: [],
       derivationStory: "",
-      sentenceExample: []
+      sentenceExample: [],
+      jgVideo: "",
+      wordGroup: ""
     };
   },
 
@@ -180,8 +186,18 @@ export default {
         this.getNebulas(),
         this.getTree(),
         this.getWisDomAffix(),
+        this.getVideoInformation()
       ]);
     },
+
+    async getVideoInformation() {
+      let res = await this.$tplAPI.getVideoInfos(this.word)
+      const {aliVideoUrl="", wordGroup = ""} = res || {};
+      this.jgVideo = aliVideoUrl;
+      this.wordGroup = wordGroup.split("\r\n")
+    },
+
+
     async getMnemonics() {
       this.derivationStory = ''
       let res = await this.$tplAPI.getLingo({
@@ -190,7 +206,7 @@ export default {
         originType: "5",
         word: this.word,
       });
-      const { legitimacyMnemonics, picMnemonics } = res.mnemonics
+      const { legitimacyMnemonics, picMnemonics } = res?.mnemonics || {}
       let data = picMnemonics[0]?.content;
       this.derivationStory = legitimacyMnemonics?.derivationStory[0] || ''
       
@@ -232,7 +248,7 @@ export default {
           v.exampleEnLabel = v.exampleEnLabel.replace(/<b>/g, `<b style="color: #00b400">`)
         })
 
-        console.log('ss', this.sentenceExample);
+        // console.log('ss', this.sentenceExample);
       }
     },
 
