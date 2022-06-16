@@ -3,6 +3,9 @@
     <el-input v-model="word" style="width: 200px"></el-input>
     <el-button @click="getInfo">获取单词信息</el-button>
     <el-button @click="copyInfo">复制例句</el-button>
+    <el-button @click="copyVideo">复制视频</el-button>
+    <el-button @click="simpleCopy(picUrl)">复制图片地址</el-button>
+    <el-button @click="copyWisdomContent">复制智慧词根</el-button>
     <div id="mainContent">
       <div style="display: flex; align-items: center; column-gap: 10px">
         <div style="color: #00b400; font-weight: 700; font-size:20px">{{word}}</div>
@@ -291,6 +294,10 @@ export default {
       let wisdom = document.getElementById("wisdom").outerHTML;
       wisdom = wisdom.replace(/<!---->/g, "")
       this.simpleCopy(wisdom);
+    },
+
+    copyVideo() {
+      this.simpleCopy(this.jgVideo);
     },
 
     simpleCopy(content) {
