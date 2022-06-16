@@ -5,7 +5,8 @@ const tplAPI = {
   getLingo(params) {
     return httpGet({
       url: `${Config.RequestTable.site_a.getMnemoics}`,
-      params: params
+      params: params,
+      siteName: 'site_a'
     })
   },
   getMeans(params) {
