@@ -4,7 +4,7 @@
     <el-button @click="getInfo">获取单词信息</el-button>
     <el-button @click="copyInfo">复制例句</el-button>
     <el-button @click="copyVideo">复制视频</el-button>
-    <el-button @click="simpleCopy(picUrl)">复制图片地址</el-button>
+    <el-button @click="simpleCopy(picUrl)">复制图片</el-button>
     <el-button @click="copyWisdomContent">复制智慧词根</el-button>
     <div id="mainContent">
       <div style="display: flex; align-items: center; column-gap: 10px">
@@ -25,9 +25,8 @@
           <div style="margin-top: 6px; font-weight: 200;">{{sent.exampleCn}}</div>
         </div>
       </div>
-      
+      <video id="jdVideo" v-show="jgVideo" controls :src="jgVideo" style="width: 100%; margin: 10px 0; border-radius: 4px;"></video>
       <div style="width: 100vw; display: flex; align-items: center; column-gap: 10px">
-        <video v-show="jgVideo" controls :src="jgVideo" style="max-width: 25%;"></video>
         <img v-show="picUrl" :src="picUrl" style="max-width: 25%;" />
         <video v-show="wordVideoUrl" controls :src="wordVideoUrl" style="max-width: 25%;"></video>
         <video v-show="exampleVideoUrl" controls :src="exampleVideoUrl" style="max-width: 25%;"></video>
@@ -82,6 +81,7 @@
                   font-size: 18;
                   margin-top: 10px;
                   margin-right: 0;
+                  font-weight: 700;
                 "
                 v-html="affix.labelWord.replace(/<b>/g, `<b style='color: #ffa900'>`)"
               >
@@ -281,6 +281,7 @@ export default {
         tagId: 4,
         word: this.word,
       });
+      // console.log('res?.wordMeanAffixInfoList', res?.wordMeanAffixInfoList);
       this.wordMeanAffixInfoList = res?.wordMeanAffixInfoList.slice(0, 1) || [];
     },
 
@@ -297,7 +298,8 @@ export default {
     },
 
     copyVideo() {
-      this.simpleCopy(this.jgVideo);
+      let jdVideo = document.getElementById("jdVideo").outerHTML;
+      this.simpleCopy(jdVideo);
     },
 
     simpleCopy(content) {
