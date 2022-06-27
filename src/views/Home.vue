@@ -123,7 +123,7 @@
                     border-radius: 4px;
                     margin-right: 10px;
                   ">记忆</span>
-                <span style="color: #00994a; font-weight: 300">{{affix.wordRememberMethodList[0]}}</span>
+                <span style="color: #00994a; font-weight: 300">{{affix.wordRememberMethodList[0] | boldMessage}}</span>
               </div>
               <div
                 style="
@@ -177,6 +177,16 @@ export default {
   computed: {
     audioUrl() {
       return `https://dict.youdao.com/dictvoice?type=1&audio=${this.word}`
+    }
+  },
+  
+  filters: {
+    boldMessage(value) {
+      if (!value) return ''
+      let strlist = value.split("→")
+      let laststr = `**${strlist.pop()}**`
+      strlist.push(laststr)
+      return `${strlist.join("→")}`
     }
   },
 
