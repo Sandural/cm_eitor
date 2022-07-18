@@ -97,7 +97,7 @@
                     border-radius: 4px;
                     margin-right: 10px;
                   ">词根</span>
-                <span style="color: #a8a8a8; font-weight: 300">{{ affix.wordRootAffixList[0].affix }} = {{ affix.wordRootAffixList[0].content }}</span>
+                <span style="color: #ffa900; font-weight: 700;">{{ affix.wordRootAffixList[0].affix }} = {{ affix.wordRootAffixList[0].content }}</span>
               </div>
               <div style="margin-top: 5px" v-if="affix.wordSuffixAffixList">
                 <span
